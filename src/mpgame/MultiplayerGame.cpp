@@ -13876,7 +13876,7 @@ void idMultiplayerGame::SetArenaCampaignDepthOfField( bool enabled, float focusD
 	}
 
 	if ( !enabled ) {
-		if ( arenaPresentationBlurEnabled ) {
+		if ( !joinScreenSoftFocusEnabled ) {
 			renderSystem->SetSpecialEffect( SPECIAL_EFFECT_BLUR, false );
 		}
 		arenaPresentationBlurEnabled = false;
@@ -15556,7 +15556,7 @@ void idMultiplayerGame::SetJoinScreenSoftFocus( bool enabled ) {
 	if ( !enabled ) {
 		// The arena presentation owns the same effect slot; never cancel its
 		// depth of field on the way out of the join screen.
-		if ( joinScreenSoftFocusEnabled && !arenaPresentationBlurEnabled ) {
+		if ( !arenaPresentationBlurEnabled ) {
 			renderSystem->SetSpecialEffect( SPECIAL_EFFECT_BLUR, false );
 		}
 		joinScreenSoftFocusEnabled = false;
@@ -16115,6 +16115,7 @@ const char* idMultiplayerGame::HandleGuiCommands( const char *_menuCommand ) {
 			if ( args.Argc() - icmd	>= 1 ) {
 				JoinTeam( args.Argv( icmd++ ) );
 			}
+			SetJoinScreenSoftFocus( false );
 			continue;
 		} else if (	!idStr::Icmp( cmd, "quit" )	) {
 			cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "quit\n"	);

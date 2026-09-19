@@ -2277,6 +2277,8 @@ void idPlayer::Spawn( void ) {
 		if ( initialJoinMenuPending ) {
 			cvarSystem->SetCVarBool( "ui_joined", false );
 			cvarSystem->SetCVarString( "ui_spectate", "Spectate" );
+		} else if ( IsLocalClient() ) {
+			gameLocal.mpGame.SetJoinScreenSoftFocus( false );
 		}
 	} else {
 		initialJoinPending = false;
@@ -3406,6 +3408,9 @@ void idPlayer::SpawnToPoint( const idVec3 &spawn_origin, const idAngles &spawn_a
 		// Make sure the combat model is unlinked
 		if ( combatModel ) {
 			combatModel->Unlink( );
+		}
+		if ( IsLocalClient() ) {
+			gameLocal.mpGame.SetJoinScreenSoftFocus( false );
 		}
 	}
 
@@ -9402,6 +9407,9 @@ void idPlayer::Spectate( bool spectate, bool force ) {
 	bool inOtherInstance = gameLocal.isClient && gameLocal.GetLocalPlayer() && gameLocal.GetLocalPlayer()->GetInstance() != instance;
 
 	spectating = spectate;
+	if ( gameLocal.isMultiplayer && IsLocalClient() ) {
+		gameLocal.mpGame.SetJoinScreenSoftFocus( false );
+	}
 
 	// don't do any smoothing with this snapshot
 	predictedFrame = gameLocal.framenum;
